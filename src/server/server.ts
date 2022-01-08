@@ -10,26 +10,20 @@ const tedis = new Tedis({
   password: 'zhuzhuxia'
 });
 
-app.get('/', (req, res) => {
-  res.send({path: "/"})
-})
-
-app.get('/signDays', (req, res) => {
-  tedis.smembers('zsw').then(record => {
+app.get('/signDays', (req: any, res) => {
+  tedis.smembers(req.query.user).then(record => {
     res.send(record)
   })
 })
 
-app.get('/sign', (req, res) => {
-  console.log(req.query.today)
-  console.log(typeof req.query.today)
-  tedis.sadd('zsw', req.query.today as string).then(record => {
-    res.send(record)
+app.get('/sign', (req: any, res) => {
+  tedis.sadd(req.query.user, req.query.today).then(_ => {
+    res.sendStatus(200)
   })
 })
 
-app.get('/danger', (req, res) => {
-  tedis.srem('zsw', String(req.query.today)).then(_ => {
+app.get('/danger', (req: any, res) => {
+  tedis.srem(req.query.user, req.query.today).then(_ => {
     res.sendStatus(200)
   })
 })
